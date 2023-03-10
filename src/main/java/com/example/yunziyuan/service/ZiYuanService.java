@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.yunziyuan.dao.ZiYuanDao;
-import com.example.yunziyuan.domain.ZiYuan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,15 +27,13 @@ public class ZiYuanService {
         javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(
                 new javax.net.ssl.HostnameVerifier() {
                     public boolean verify(String hostname, javax.net.ssl.SSLSession sslSession) {
-                        if (hostname.equals("10.126.148.2")) {
+                        if (hostname.equals("10.126.20.2")) {
                             return true;
                         }
                         return false;
                     }
                 });
-    }
-
-
+            }
     @Autowired
     ZiYuanDao ziyuanDao;
 
@@ -49,14 +46,14 @@ public class ZiYuanService {
         //转换提日期输出格式
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String time = dateFormat.format(date);
-        //调用的api的接口地址
+        //获取token的api的接口地址
         HttpURLConnectionPOST httpURLConnectionPOST = new HttpURLConnectionPOST();
-        String strJson = httpURLConnectionPOST.httpURLConnectionPUT("https://10.126.148.2/rest/plat/smapp/v1/oauth/token", "{\"grantType\": \"password\",\"userName\": \"test0001\",\"value\": \"Huawei@123gsyb\"}");
+        String strJson = httpURLConnectionPOST.httpURLConnectionPUT("https://10.126.20.2/rest/plat/smapp/v1/oauth/token", "{\"grantType\": \"password\",\"userName\": \"test0001\",\"value\": \"Huawei@123gsyb\"}");
         JSONObject jsonObject1 = JSON.parseObject(strJson);
-        //System.out.println(jsonObject1.get("accessSession").toString());
-
+        System.out.println(jsonObject1.get("accessSession").toString());
         //jsonObject1.get("accessSession");
-        String apiPath = "https://10.126.148.2/rest/tenant-resource/v1/instances/CLOUD_VM?pageNo=1&pageSize=500";
+        //调用的api的接口地址
+        String apiPath = "https://10.126.20.2/rest/tenant-resource/v1/instances/CLOUD_VM?pageNo=3&pageSize=1000";
         BufferedReader in = null;
         StringBuffer result = null;
         try {
@@ -91,7 +88,7 @@ public class ZiYuanService {
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JSONObject jsonObject2 = (JSONObject) jsonArray.get(i);
                     if (jsonObject2.get("vdcName") != null) {
-                        a = sql.executeUpdate("insert into joke (vdcName,bizRegionNativeId,name,flavorRamSize,flavorVcpu,nativeId)"
+                        a = sql.executeUpdate("insert into RegonAB (vdcName,bizRegionNativeId,name,flavorRamSize,flavorVcpu,nativeId)"
                                 + "values('" + jsonObject2.get("vdcName").toString() + "','"
                                 + jsonObject2.get("bizRegionNativeId").toString() + "','"
                                 + jsonObject2.get("name").toString() + "','" +
@@ -99,8 +96,6 @@ public class ZiYuanService {
                                 jsonObject2.get("flavorVcpu").toString() + "','" +
                                 jsonObject2.get("nativeId").toString() + "')");
                     }
-
-
                 }
                 System.out.println("数据插入成功");
             } catch (Exception e) {
@@ -118,7 +113,6 @@ public class ZiYuanService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 }

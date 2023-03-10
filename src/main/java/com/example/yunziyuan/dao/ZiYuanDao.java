@@ -1,6 +1,5 @@
 package com.example.yunziyuan.dao;
 
-import com.example.yunziyuan.domain.ZiYuan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -24,7 +23,7 @@ public class ZiYuanDao {
         Connection conn = null;
 
         try {
-            Class.forName(driver); //
+            Class.forName(driver);
             conn = (Connection) DriverManager.getConnection(url, username, password);
 
             System.out.println("数据库连接成功");
