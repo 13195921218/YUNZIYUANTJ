@@ -53,65 +53,72 @@ public class ZiYuanService {
         System.out.println(jsonObject1.get("accessSession").toString());
         //jsonObject1.get("accessSession");
         //调用的api的接口地址
-        String apiPath = "https://10.126.20.2/rest/tenant-resource/v1/instances/CLOUD_VM?pageNo=3&pageSize=1000";
-        BufferedReader in = null;
-        StringBuffer result = null;
-        try {
-            URL url = new URL(apiPath);
-            //打开和url之间的连接
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-            connection.setRequestProperty("X-Auth-Token", jsonObject1.get("accessSession").toString());
-            connection.connect();
-            result = new StringBuffer();
-            //读取URL的响应
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-            String line;
-            while ((line = in.readLine()) != null) {
-                result.append(line);
-            }
-            String result2 = result.toString(); //返回json字符串
-            //获取数据
-            JSONObject jsonObject = JSON.parseObject(result2);
-            //JSONObject resultJsonObject = jsonObject.getJSONObject("result");
-            //JSONObject bodyJsonObject = resultJsonObject.getJSONObject("showapi_res_body");
-            JSONArray jsonArray = jsonObject.getJSONArray("objList");
-            //System.out.println(jsonArray);
-            ZiYuanDao c = new ZiYuanDao();  //连接数据库
-            Connection con = c.getConn();
+        for (int size = 1; size <= 3; size++) {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("https://10.126.20.2/rest/tenant-resource/v1/instances/CLOUD_VM?pageNo=");
+            buffer.append(size);
+            buffer.append("&pageSize=1000");
+            String apiPath = buffer.toString();
+            BufferedReader in = null;
+            StringBuffer result = null;
+            System.out.println(apiPath);
             try {
-                Statement sql;
-                ResultSet res;
-                int a;
-                sql = con.createStatement();
-                //从jsonBean中获取封装的数据插入数据库中，得道的每条的数据都插入
-                for (int i = 0; i < jsonArray.size(); i++) {
-                    JSONObject jsonObject2 = (JSONObject) jsonArray.get(i);
-                    if (jsonObject2.get("vdcName") != null) {
-                        a = sql.executeUpdate("insert into RegonAB (vdcName,bizRegionNativeId,name,flavorRamSize,flavorVcpu,nativeId)"
-                                + "values('" + jsonObject2.get("vdcName").toString() + "','"
-                                + jsonObject2.get("bizRegionNativeId").toString() + "','"
-                                + jsonObject2.get("name").toString() + "','" +
-                                jsonObject2.get("flavorRamSize").toString() + "','" +
-                                jsonObject2.get("flavorVcpu").toString() + "','" +
-                                jsonObject2.get("nativeId").toString() + "')");
+                URL url = new URL(apiPath);
+                //打开和url之间的连接
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+                connection.setRequestProperty("X-Auth-Token", jsonObject1.get("accessSession").toString());
+                connection.connect();
+                result = new StringBuffer();
+                //读取URL的响应
+                in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+                String line;
+                while ((line = in.readLine()) != null) {
+                    result.append(line);
+                }
+                String result2 = result.toString(); //返回json字符串
+                //获取数据
+                JSONObject jsonObject = JSON.parseObject(result2);
+                //JSONObject resultJsonObject = jsonObject.getJSONObject("result");
+                //JSONObject bodyJsonObject = resultJsonObject.getJSONObject("showapi_res_body");
+                JSONArray jsonArray = jsonObject.getJSONArray("objList");
+                //System.out.println(jsonArray);
+                ZiYuanDao c = new ZiYuanDao();  //连接数据库
+                Connection con = c.getConn();
+                try {
+                    Statement sql;
+                    ResultSet res;
+                    int a;
+                    sql = con.createStatement();
+                    //从jsonBean中获取封装的数据插入数据库中，得道的每条的数据都插入
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        JSONObject jsonObject2 = (JSONObject) jsonArray.get(i);
+                        if (jsonObject2.get("vdcName") != null) {
+                            a = sql.executeUpdate("insert into HXRegonAB (vdcName,bizRegionNativeId,name,flavorRamSize,flavorVcpu,nativeId)"
+                                    + "values('" + jsonObject2.get("vdcName").toString() + "','"
+                                    + jsonObject2.get("bizRegionNativeId").toString() + "','"
+                                    + jsonObject2.get("name").toString() + "','" +
+                                    jsonObject2.get("flavorRamSize").toString() + "','" +
+                                    jsonObject2.get("flavorVcpu").toString() + "','" +
+                                    jsonObject2.get("nativeId").toString() + "')");
+                        }
                     }
+                    System.out.println("第" + size +  "页数据插入成功！");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                System.out.println("数据插入成功");
-            } catch (Exception e) {
+            } catch (MalformedURLException e) {
                 e.printStackTrace();
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    if (in != null) {
+                        in.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
