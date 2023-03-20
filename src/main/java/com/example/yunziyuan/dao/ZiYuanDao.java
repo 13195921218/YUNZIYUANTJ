@@ -25,15 +25,10 @@ public class ZiYuanDao {
         try {
             Class.forName(driver);
             conn = (Connection) DriverManager.getConnection(url, username, password);
-
             System.out.println("数据库连接成功");
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
-
         return conn;
     }
 

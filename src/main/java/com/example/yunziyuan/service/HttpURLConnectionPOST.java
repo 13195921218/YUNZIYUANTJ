@@ -9,7 +9,7 @@ import java.net.URL;
 
 public class HttpURLConnectionPOST {
     public  String httpURLConnectionPUT (String url, String data) {
-        StringBuffer strBf = new StringBuffer();
+        StringBuilder strBf = new StringBuilder();
         try {
             URL realUrl = new URL(url);
             //将realUrl以 open方法返回的urlConnection  连接强转为HttpURLConnection连接  (标识一个url所引用的远程对象连接)
