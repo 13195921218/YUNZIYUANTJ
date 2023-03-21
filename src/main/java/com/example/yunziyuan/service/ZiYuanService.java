@@ -15,6 +15,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,7 +33,7 @@ public class ZiYuanService {
             }
     @Autowired
     ZiYuanDao ziyuanDao;
-    public void httpRequest() {
+    public void httpRequest() throws SQLException {
         //得到long类型当前时间
         long l = System.currentTimeMillis();
         //new日期对象
@@ -48,6 +49,8 @@ public class ZiYuanService {
         //jsonObject1.get("accessSession");
         ZiYuanDao c = new ZiYuanDao();  //连接数据库
         Connection con = c.getConn();
+        c.getCount1();
+        c.getCount2();
         //调用的api的接口地址
         for (int size = 1; size <= 3; size++) {
             String apiPath = "https://10.126.20.2/rest/tenant-resource/v1/instances/CLOUD_VM?pageNo=" +
@@ -86,7 +89,7 @@ public class ZiYuanService {
                     for (Object o : jsonArray) {
                         JSONObject jsonObject2 = (JSONObject) o;
                         if (jsonObject2.get("vdcName") != null) {
-                            a = sql.executeUpdate("insert into HXRegonAB (vdcName,bizRegionNativeId,name,flavorRamSize,flavorVcpu,nativeId)"
+                            a = sql.executeUpdate("insert into HXRegionAB (vdcName,bizRegionNativeId,name,flavorRamSize,flavorVcpu,nativeId)"
                                     + "values('" + jsonObject2.get("vdcName").toString() + "','"
                                     + jsonObject2.get("bizRegionNativeId").toString() + "','"
                                     + jsonObject2.get("name").toString() + "','" +
@@ -95,11 +98,13 @@ public class ZiYuanService {
                                     jsonObject2.get("nativeId").toString() + "')");
                         }
                     }
-                    System.out.println("当前时间：" + time + "第" + size +  "页数据插入成功！");
+                    c.getCount1();
+                    System.out.println("当前时间：" + new Date() + "第" + size +  "页数据插入成功！");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             } finally {
                 try {
