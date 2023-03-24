@@ -33,24 +33,12 @@ public class ZiYuanService {
             }
     @Autowired
     ZiYuanDao ziyuanDao;
-    public void httpRequest() throws SQLException {
-        //得到long类型当前时间
-        long l = System.currentTimeMillis();
-        //new日期对象
-        Date date = new Date(l);
-        //转换提日期输出格式
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-        String time = dateFormat.format(date);
-        //获取token的api的接口地址
-        HttpURLConnectionPOST httpURLConnectionPOST = new HttpURLConnectionPOST();
-        String strJson = httpURLConnectionPOST.httpURLConnectionPUT("https://10.126.20.2/rest/plat/smapp/v1/oauth/token", "{\"grantType\": \"password\",\"userName\": \"test0001\",\"value\": \"Huawei@123gsyb\"}");
-        JSONObject jsonObject1 = JSON.parseObject(strJson);
-        System.out.println(jsonObject1.get("accessSession").toString());
-        //jsonObject1.get("accessSession");
+    public void httpRequestEcs() throws SQLException {
+        Token token = new Token();
         ZiYuanDao c = new ZiYuanDao();  //连接数据库
         Connection con = c.getConn();
-        c.getCount1();
-        c.getCount2();
+        c.getEcsCount1();
+        c.getEcsCount2();
         //调用的api的接口地址
         for (int size = 1; size <= 3; size++) {
             String apiPath = "https://10.126.20.2/rest/tenant-resource/v1/instances/CLOUD_VM?pageNo=" +
@@ -64,7 +52,7 @@ public class ZiYuanService {
                 //打开和url之间的连接
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-                connection.setRequestProperty("X-Auth-Token", jsonObject1.get("accessSession").toString());
+                connection.setRequestProperty("X-Auth-Token", token.jsonObject1.get("accessSession").toString());
                 connection.connect();
                 result = new StringBuilder();
                 //读取URL的响应
@@ -98,8 +86,8 @@ public class ZiYuanService {
                                     jsonObject2.get("nativeId").toString() + "')");
                         }
                     }
-                    c.getCount1();
-                    System.out.println("当前时间：" + new Date() + "第" + size +  "页数据插入成功！");
+                    c.getEcsCount1();
+                    System.out.println("当前时间：" + new Date() + "      第" + size +  "页数据插入成功！");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -114,6 +102,73 @@ public class ZiYuanService {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    public void httpRequestDcs() throws SQLException {
+        Token token = new Token();
+        ZiYuanDao c = new ZiYuanDao();  //连接数据库
+        Connection con = c.getConn();
+        c.getDcsCount1();
+        c.getDcsCount2();
+        //调用的api的接口地址
+        String apiPath = "https://10.126.20.2/rest/tenant-resource/v1/instances/CLOUD_DCS_INSTANCE?pageNo=1&pageSize=1000";
+        BufferedReader in = null;
+        StringBuilder result = null;
+        System.out.println("调用apiPath：" + apiPath);
+        try {
+            URL url = new URL(apiPath);
+            //打开和url之间的连接
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+            connection.setRequestProperty("X-Auth-Token", token.jsonObject1.get("accessSession").toString());
+            connection.connect();
+            result = new StringBuilder();
+            //读取URL的响应
+            in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+            String line;
+            while ((line = in.readLine()) != null) {
+                result.append(line);
+            }
+            String result2 = result.toString(); //返回json字符串
+            //获取数据
+            JSONObject jsonObject = JSON.parseObject(result2);
+            JSONArray jsonArray = jsonObject.getJSONArray("objList");
+            //System.out.println(jsonArray);
+            try {
+                Statement sql;
+                ResultSet res;
+                int a;
+                sql = con.createStatement();
+                //从jsonBean中获取封装的数据插入数据库中，得道的每条的数据都插入
+                for (int j = 0; j < jsonArray.size(); j++) {
+                    JSONObject jsonObject2 = (JSONObject) jsonArray.get(j);
+                    if (jsonObject2.get("engineVersion").equals("5.0") ) {
+                        a = sql.executeUpdate("insert into hxdcslist (vdcName,bizRegionName,name,engineVersion,usedMemory,cacheMode)"
+                                + "values('" + jsonObject2.get("vdcName").toString() + "','"
+                                + jsonObject2.get("bizRegionName").toString() + "','"
+                                + jsonObject2.get("name").toString() + "','" +
+                                jsonObject2.get("engineVersion").toString() + "','"+
+                                jsonObject2.get("usedMemory").toString() +"','"+
+                                jsonObject2.get("cacheMode").toString()+ "')");
+                    }
+                }
+                c.getDcsCount1();
+                System.out.println("当前时间：" + new Date()  +  "      数据插入成功！");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

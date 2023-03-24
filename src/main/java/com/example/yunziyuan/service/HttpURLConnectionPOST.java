@@ -44,7 +44,7 @@ public class HttpURLConnectionPOST {
             }
             reader.close();
             connection.disconnect();
-            System.out.println(strBf.toString());
+            //System.out.println(strBf.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
