@@ -18,7 +18,7 @@ public class ZiYuanDao {
         String driver = "com.mysql.cj.jdbc.Driver";
         String url = "jdbc:mysql://172.23.62.176:3306/ziyuan?useUnicode=true&characterEncoding=utf-8&useSSL=false";
         String username = "root";
-        String password = "123456";
+        String password = "Ye!@998?";
         Connection conn = null;
 
         try {
@@ -56,7 +56,7 @@ public class ZiYuanDao {
         Connection con = getConn();
         Statement sql;
         sql = con.createStatement();
-        ResultSet count1 = sql.executeQuery("select * from hxdcslist");
+        ResultSet count1 = sql.executeQuery("select * from HXDCSLIST");
         count1.last();
         int row_count1=count1.getRow();
         System.out.println("当前时间：" + new java.util.Date() + "      当前数据条数：" + row_count1 );
@@ -66,9 +66,9 @@ public class ZiYuanDao {
         Connection con = getConn();
         Statement sql;
         sql = con.createStatement();
-        boolean b = sql.execute("truncate table hxdcslist");
+        boolean b = sql.execute("truncate table HXDCSLIST");
         System.out.println("当前时间：" + new java.util.Date() + "      数据已清空!");
-        ResultSet count2 = sql.executeQuery("select * from hxdcslist");
+        ResultSet count2 = sql.executeQuery("select * from HXDCSLIST");
         count2.last();
         int row_count2 = count2.getRow();
         System.out.println("当前时间：" + new java.util.Date() + "      当前数据条数：" + row_count2 );

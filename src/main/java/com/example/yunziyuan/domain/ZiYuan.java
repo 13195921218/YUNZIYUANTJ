@@ -4,9 +4,27 @@ public class ZiYuan {
     private String vdcName;
     private String cloudLocationName;
     private String name;
+    private String ipAddress;
+    private String ip;
     private String flavorRamSize;
     private String flavorVcpu;
     private String nativeId;
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
 
     public String getVdcName() {
         return vdcName;

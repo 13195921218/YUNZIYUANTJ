@@ -76,10 +76,11 @@ public class ZiYuanService {
                     for (Object o : jsonArray) {
                         JSONObject jsonObject2 = (JSONObject) o;
                         if (jsonObject2.get("vdcName") != null) {
-                            a = sql.executeUpdate("insert into HXRegionAB (vdcName,bizRegionNativeId,name,flavorRamSize,flavorVcpu,nativeId)"
+                            a = sql.executeUpdate("insert into HXRegionAB (vdcName,bizRegionNativeId,name,ipAddress,flavorRamSize,flavorVcpu,nativeId)"
                                     + "values('" + jsonObject2.get("vdcName").toString() + "','"
                                     + jsonObject2.get("bizRegionNativeId").toString() + "','"
                                     + jsonObject2.get("name").toString() + "','" +
+                                    jsonObject2.get("ipAddress").toString() + "','" +
                                     jsonObject2.get("flavorRamSize").toString() + "','" +
                                     jsonObject2.get("flavorVcpu").toString() + "','" +
                                     jsonObject2.get("nativeId").toString() + "')");
@@ -144,10 +145,11 @@ public class ZiYuanService {
                 for (int j = 0; j < jsonArray.size(); j++) {
                     JSONObject jsonObject2 = (JSONObject) jsonArray.get(j);
                     if (jsonObject2.get("engineVersion").equals("5.0") ) {
-                        a = sql.executeUpdate("insert into hxdcslist (vdcName,bizRegionName,name,engineVersion,usedMemory,cacheMode)"
+                        a = sql.executeUpdate("insert into HXDCSLIST (vdcName,bizRegionName,name,ip,engineVersion,usedMemory,cacheMode)"
                                 + "values('" + jsonObject2.get("vdcName").toString() + "','"
                                 + jsonObject2.get("bizRegionName").toString() + "','"
                                 + jsonObject2.get("name").toString() + "','" +
+                                jsonObject2.get("ip").toString() + "','"+
                                 jsonObject2.get("engineVersion").toString() + "','"+
                                 jsonObject2.get("usedMemory").toString() +"','"+
                                 jsonObject2.get("cacheMode").toString()+ "')");
